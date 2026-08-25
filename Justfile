@@ -51,6 +51,7 @@ test:
 # Regenerate the prebuilt sequencer db dump for fast TestContext::new() (needs Docker; commit the dump).
 regenerate-test-fixture:
     @echo "🧪 Regenerating test fixture"
+    @just resolve-bedrock-node
     RISC0_DEV_MODE=1 RUST_LOG=info cargo run -p test_fixtures --bin regenerate_test_fixture
 
 # Regenerate the committed Grafana dashboards from the Rust generator
@@ -69,8 +70,18 @@ bench:
 # Run Bedrock node in docker.
 [working-directory: 'bedrock']
 run-bedrock:
+    @cd .. && just resolve-bedrock-node
     @echo "⛓️ Running bedrock"
-    docker compose up
+    docker compose up --build
+
+resolve-bedrock-node:
+    @bash .github/scripts/resolve_bedrock_node_in_docker.sh
+
+resolve-host-bedrock-node:
+    @python3 .github/scripts/resolve_bedrock_node.py \
+        --target-platform host \
+        --output-directory bedrock/.resolved-host \
+        --target-directory target/bedrock-node-host
 
 # Run Prometheus + Grafana in docker. Grafana: http://localhost:3000 (anonymous
 # admin), Prometheus: http://localhost:9090. Scrapes the sequencer's /metrics.

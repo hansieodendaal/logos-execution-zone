@@ -22,4 +22,6 @@ integration_tests/configs/debug/
 .DS_Store
 
 /integration_tests/cucumber_tests/temp/
+/bedrock/.resolved/
+/bedrock/.resolved-host/
 MyLogFile.log
